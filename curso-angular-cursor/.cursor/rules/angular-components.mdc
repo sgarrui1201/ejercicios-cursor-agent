@@ -1,0 +1,31 @@
+---
+description: Angular component standards for standalone and signal APIs
+globs: **/*.component.ts
+alwaysApply: false
+---
+
+# Angular Component Rules
+
+- Always use `ChangeDetectionStrategy.OnPush`.
+- Use signal APIs: `input()` instead of `@Input()`.
+- Use signal APIs: `output()` instead of `@Output()` + `EventEmitter`.
+- Use query functions: `viewChild` / `contentChild` instead of decorators.
+- Keep components under 150 lines; split UI or logic into smaller units when needed.
+
+```typescript
+// BAD
+@Input() userName: string = '';
+@Output() userSelected = new EventEmitter<User>();
+@ViewChild('modal') modal!: ElementRef;
+```
+
+```typescript
+// GOOD
+userName = input<string>('');
+userSelected = output<User>();
+modal = viewChild<ElementRef>('modal');
+```
+
+When generating components, include:
+- `standalone: true`
+- `changeDetection: ChangeDetectionStrategy.OnPush`

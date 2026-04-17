@@ -1,0 +1,69 @@
+---
+description: Angular architecture conventions for Cursor project
+alwaysApply: true
+---
+
+# Angular Architecture Conventions
+
+## Standalone Components (No NgModules)
+
+```typescript
+// BAD
+@Component({ selector: 'app-user' })
+export class UserComponent {}
+
+@NgModule({ declarations: [UserComponent] })
+export class UserModule {}
+```
+
+```typescript
+// GOOD
+@Component({
+  selector: 'app-user',
+  standalone: true,
+  imports: [],
+})
+export class UserComponent {}
+```
+
+- New components must be `standalone: true`.
+- Do not create feature-level `NgModule` wrappers.
+
+## Reactive State with Signals
+
+```typescript
+// BAD
+private user$ = new BehaviorSubject<User | null>(null);
+```
+
+```typescript
+// GOOD
+private user = signal<User | null>(null);
+userReadonly = this.user.asReadonly();
+```
+
+- Use `signal()` as the default local reactive state primitive.
+- Expose read-only state with `.asReadonly()` when needed.
+
+## Dependency Injection with `inject()`
+
+```typescript
+// BAD
+constructor(private http: HttpClient, private router: Router) {}
+```
+
+```typescript
+// GOOD
+private http = inject(HttpClient);
+private router = inject(Router);
+```
+
+- Prefer property-based DI via `inject()` over constructor parameter injection.
+
+## Project Folder Structure
+
+- `features/`: domain features (components, routes, state, facades).
+- `shared/`: reusable UI, pipes, directives, utilities.
+- `core/`: singletons, app-wide services, interceptors, guards.
+
+When creating or refactoring Angular code, always follow these conventions.

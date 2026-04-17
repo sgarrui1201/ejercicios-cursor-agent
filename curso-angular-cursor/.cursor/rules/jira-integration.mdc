@@ -1,0 +1,55 @@
+---
+description: Enforce Jira traceability in commits and TODOs
+alwaysApply: true
+---
+
+# Jira Traceability Rule
+
+Every code change must keep Jira traceability in commits and inline TODOs.
+
+## Commit Message Format (Required)
+
+Use Conventional Commits and include the Jira key in the scope:
+
+```text
+<type>(<JIRA-KEY>): <short description>
+```
+
+Valid examples:
+
+```text
+feat(CURSO-3): añadir rule de trazabilidad Jira
+fix(CURSO-12): corregir memory leak en UserListComponent
+```
+
+Allowed commit `type` values:
+- `feat`
+- `fix`
+- `refactor`
+- `chore`
+- `docs`
+- `test`
+
+## TODO Format in Code (Required)
+
+When leaving TODOs, always include Jira key:
+
+```typescript
+// TODO [CURSO-7]: migrar a signal inputs cuando se refactorice este componente
+```
+
+## MCP Enrichment Rule (Required)
+
+Before proposing or generating a final commit message:
+- Detect Jira key from context (branch, user request, changed issue).
+- If key is missing, ask for it explicitly.
+- Query Jira with `getJiraIssue` and use the issue summary to improve the commit subject.
+- Keep the final message concise and aligned with issue intent.
+
+## Invalid Formats
+
+```text
+CURSO-3: sin tipo conventional commit    -> INCORRECTO
+fix: sin clave de Jira                   -> INCORRECTO
+arreglar el bug                          -> INCORRECTO
+```

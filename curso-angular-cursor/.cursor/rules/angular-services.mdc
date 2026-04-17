@@ -1,0 +1,34 @@
+---
+description: Angular service standards for typed HTTP and resilient error handling
+globs: **/*.service.ts
+alwaysApply: false
+---
+
+# Angular Service Rules
+
+- Use `@Injectable({ providedIn: 'root' })` by default.
+- Type all `HttpClient` requests with generics (`get<T>()`, `post<T>()`, etc.).
+- Handle HTTP errors with `catchError` and user-facing notifications.
+- Add caching with `shareReplay` or signals when data is reused.
+
+```typescript
+// BAD
+getUsers() {
+  return this.http.get('/api/users');
+}
+```
+
+```typescript
+// GOOD
+getUsers() {
+  return this.http.get<User[]>('/api/users').pipe(
+    shareReplay({ bufferSize: 1, refCount: true }),
+    catchError((error) => {
+      this.notifications.error('No se pudo cargar usuarios');
+      return throwError(() => error);
+    })
+  );
+}
+```
+
+Prefer small, focused services and keep side effects explicit.
